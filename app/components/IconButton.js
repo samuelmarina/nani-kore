@@ -1,12 +1,27 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
+import { TouchableOpacity } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
-function IconButton(props) {
-  return <View style={styles.container}></View>;
+function IconButton({
+  name,
+  size = 40,
+  backgroundColor = "#000",
+  iconColor = "#fff",
+}) {
+  return (
+    <TouchableOpacity
+      style={{
+        backgroundColor,
+        width: size,
+        height: size,
+        borderRadius: size / 2,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Ionicons name={name} size={size} color={iconColor} />
+    </TouchableOpacity>
+  );
 }
-
-const styles = StyleSheet.create({
-  container: {},
-});
 
 export default IconButton;
