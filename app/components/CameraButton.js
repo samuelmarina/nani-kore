@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
+import colors from "../config/colors";
 
 function CameraButton(props) {
   return (
@@ -15,14 +16,14 @@ const styles = StyleSheet.create({
     height: 100,
     borderWidth: 5,
     borderRadius: 50,
-    borderColor: "gray",
+    borderColor: colors.primary,
     justifyContent: "center",
     alignItems: "center",
   },
   circle: {
     width: "95%",
     height: "95%",
-    backgroundColor: "gray",
+    backgroundColor: colors.primary,
     borderRadius: 50,
   },
 });

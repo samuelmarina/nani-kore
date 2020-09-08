@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableWithoutFeedback } from "react-native";
 import AppText from "./AppText";
 import colors from "../config/colors";
 
-function LanguageTexts({ language, translation, onPress }) {
+function LanguageTexts({ language, translation, onPress, style }) {
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={onPress}>
@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
   },
   translation: {
     fontWeight: "bold",
+    marginHorizontal: 20,
   },
 });
 

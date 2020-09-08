@@ -3,21 +3,23 @@ import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 function IconButton({
-  name,
-  size = 40,
   backgroundColor = "#000",
   iconColor = "#fff",
+  name,
+  onPress,
+  size = 40,
 }) {
   return (
     <TouchableOpacity
       style={{
         backgroundColor,
+        borderRadius: size / 2,
+        alignItems: "center",
+        justifyContent: "center",
         width: size,
         height: size,
-        borderRadius: size / 2,
-        justifyContent: "center",
-        alignItems: "center",
       }}
+      onPress={onPress}
     >
       <Ionicons name={name} size={size} color={iconColor} />
     </TouchableOpacity>
