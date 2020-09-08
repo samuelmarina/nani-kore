@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "expo-camera";
 import Constants from "expo-constants";
+import * as Speech from "expo-speech";
 
 import useCamera from "../hooks/useCamera";
 import AppText from "../components/AppText";
@@ -13,6 +14,7 @@ import colors from "../config/colors";
 function MainScreen(props) {
   const { hasPermission } = useCamera();
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [word, setWord] = useState("Hello");
 
   if (!hasPermission) {
     return <AppText>No camera permission</AppText>;
@@ -26,14 +28,32 @@ function MainScreen(props) {
     );
   };
 
+  const speakJapanese = () => {
+    Speech.stop();
+    Speech.speak(word, { language: "ja" });
+  };
+
+  const speakMainLanguage = () => {
+    Speech.stop();
+    Speech.speak(word, { language: "en" });
+  };
+
   return (
     <View style={styles.container}>
       <Camera style={styles.camera} type={type}>
         <View style={styles.firstLanguage}>
-          <LanguageTexts language="English" translation="Hello" />
+          <LanguageTexts
+            language="English"
+            translation="Hello"
+            onPress={speakMainLanguage}
+          />
         </View>
         <View style={styles.secondLanguage}>
-          <LanguageTexts language="Japanese" translation="Whatever" />
+          <LanguageTexts
+            language="Japanese"
+            translation="Whatever"
+            onPress={speakJapanese}
+          />
         </View>
         <View style={styles.cameraButton}>
           <CameraButton />
