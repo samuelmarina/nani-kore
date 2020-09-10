@@ -10,11 +10,24 @@ import LanguageTexts from "../components/LanguageTexts";
 import CameraButton from "../components/CameraButton";
 import IconButton from "../components/IconButton";
 import colors from "../config/colors";
+import useApi from "../hooks/useApi";
+import translationApi from "../api/translation";
 
 function MainScreen(props) {
   const { hasPermission } = useCamera();
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [word, setWord] = useState("Hello");
+  const [word, setWord] = useState("How are you?");
+  const [translatedWord, setTranslatedWord] = useState("お元気ですか？");
+
+  const getTranslationApi = useApi(translationApi.getTranslation);
+
+  const translate = async () => {
+    const data = new FormData();
+    data.append("q", word);
+    data.append("langpair", "en|ja");
+    await getTranslationApi.request({ q: word, langpair: "en|ja" });
+    console.log(getTranslationApi.data.responseData.translatedText);
+  };
 
   if (!hasPermission) {
     return <AppText>No camera permission</AppText>;
@@ -44,14 +57,14 @@ function MainScreen(props) {
         <View style={styles.firstLanguage}>
           <LanguageTexts
             language="English"
-            translation="Hello"
-            onPress={speakMainLanguage}
+            translation={word}
+            onPress={translate}
           />
         </View>
         <View style={styles.secondLanguage}>
           <LanguageTexts
             language="Japanese"
-            translation="Whatever"
+            translation={translatedWord}
             onPress={speakJapanese}
           />
         </View>
