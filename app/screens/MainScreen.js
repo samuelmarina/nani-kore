@@ -3,31 +3,24 @@ import { StyleSheet, View } from "react-native";
 import { Camera } from "expo-camera";
 import Constants from "expo-constants";
 import * as Speech from "expo-speech";
+import LottieView from "lottie-react-native";
 
-import useCamera from "../hooks/useCamera";
 import AppText from "../components/AppText";
-import LanguageTexts from "../components/LanguageTexts";
 import CameraButton from "../components/CameraButton";
-import IconButton from "../components/IconButton";
 import colors from "../config/colors";
-import useApi from "../hooks/useApi";
-import translationApi from "../api/translation";
+import IconButton from "../components/IconButton";
+import LanguageTexts from "../components/LanguageTexts";
+import useCamera from "../hooks/useCamera";
+import useImageRecognition from "../hooks/useImageRecognition";
 
 function MainScreen(props) {
   const { hasPermission } = useCamera();
   const [type, setType] = useState(Camera.Constants.Type.back);
-  const [word, setWord] = useState("How are you?");
-  const [translatedWord, setTranslatedWord] = useState("お元気ですか？");
+  const [word, setWord] = useState("What is this?");
+  const [translatedWord, setTranslatedWord] = useState("何これ？");
+  const { loading, getWords } = useImageRecognition();
 
-  const getTranslationApi = useApi(translationApi.getTranslation);
-
-  const translate = async () => {
-    const data = new FormData();
-    data.append("q", word);
-    data.append("langpair", "en|ja");
-    await getTranslationApi.request({ q: word, langpair: "en|ja" });
-    console.log(getTranslationApi.data.responseData.translatedText);
-  };
+  let camera;
 
   if (!hasPermission) {
     return <AppText>No camera permission</AppText>;
@@ -43,7 +36,7 @@ function MainScreen(props) {
 
   const speakJapanese = () => {
     Speech.stop();
-    Speech.speak(word, { language: "ja" });
+    Speech.speak(translatedWord, { language: "ja" });
   };
 
   const speakMainLanguage = () => {
@@ -51,35 +44,63 @@ function MainScreen(props) {
     Speech.speak(word, { language: "en" });
   };
 
+  const takePicture = async () => {
+    if (camera) {
+      const picture = await camera.takePictureAsync({ base64: true });
+      const base64 = picture.base64;
+      handleLoading(base64);
+    }
+  };
+
+  const handleLoading = async (base64) => {
+    const response = await getWords(base64);
+    if (response !== null) {
+      setWord(response.word);
+      setTranslatedWord(response.translatedWord);
+      return;
+    }
+    console.log("Error");
+  };
+
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type}>
-        <View style={styles.firstLanguage}>
-          <LanguageTexts
-            language="English"
-            translation={word}
-            onPress={translate}
+      <Camera style={styles.camera} type={type} ref={(ref) => (camera = ref)}>
+        {loading ? (
+          <LottieView
+            autoPlay
+            loop
+            source={require("../assets/animations/loadingLottie.json")}
           />
-        </View>
-        <View style={styles.secondLanguage}>
-          <LanguageTexts
-            language="Japanese"
-            translation={translatedWord}
-            onPress={speakJapanese}
-          />
-        </View>
-        <View style={styles.cameraButton}>
-          <CameraButton />
-        </View>
-        <View style={styles.reverse}>
-          <IconButton
-            name="ios-reverse-camera"
-            backgroundColor="transparent"
-            iconColor={colors.primary}
-            size={50}
-            onPress={() => handleReverse()}
-          />
-        </View>
+        ) : (
+          <>
+            <View style={styles.firstLanguage}>
+              <LanguageTexts
+                language="English"
+                translation={word}
+                onPress={speakMainLanguage}
+              />
+            </View>
+            <View style={styles.secondLanguage}>
+              <LanguageTexts
+                language="Japanese"
+                translation={translatedWord}
+                onPress={speakJapanese}
+              />
+            </View>
+            <View style={styles.cameraButton}>
+              <CameraButton onPress={takePicture} />
+            </View>
+            <View style={styles.reverse}>
+              <IconButton
+                name="ios-reverse-camera"
+                backgroundColor="transparent"
+                iconColor={colors.primary}
+                size={50}
+                onPress={() => handleReverse()}
+              />
+            </View>
+          </>
+        )}
       </Camera>
     </View>
   );

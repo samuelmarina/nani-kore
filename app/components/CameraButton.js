@@ -2,10 +2,10 @@ import React from "react";
 import { StyleSheet, View, TouchableOpacity } from "react-native";
 import colors from "../config/colors";
 
-function CameraButton(props) {
+function CameraButton({ onPress }) {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.circle} />
+      <TouchableOpacity style={styles.circle} onPress={onPress} />
     </View>
   );
 }
