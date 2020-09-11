@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import { Camera } from "expo-camera";
 import Constants from "expo-constants";
 import * as Speech from "expo-speech";
-import LottieView from "lottie-react-native";
 
+import ActivityIndicator from "../components/ActivityIndicator";
 import AppText from "../components/AppText";
 import CameraButton from "../components/CameraButton";
 import colors from "../config/colors";
@@ -64,44 +64,38 @@ function MainScreen(props) {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={(ref) => (camera = ref)}>
-        {loading ? (
-          <LottieView
-            autoPlay
-            loop
-            source={require("../assets/animations/loadingLottie.json")}
-          />
-        ) : (
-          <>
-            <View style={styles.firstLanguage}>
-              <LanguageTexts
-                language="English"
-                translation={word}
-                onPress={speakMainLanguage}
-              />
-            </View>
-            <View style={styles.secondLanguage}>
-              <LanguageTexts
-                language="Japanese"
-                translation={translatedWord}
-                onPress={speakJapanese}
-              />
-            </View>
-            <View style={styles.cameraButton}>
-              <CameraButton onPress={takePicture} />
-            </View>
-            <View style={styles.reverse}>
-              <IconButton
-                name="ios-reverse-camera"
-                backgroundColor="transparent"
-                iconColor={colors.primary}
-                size={50}
-                onPress={() => handleReverse()}
-              />
-            </View>
-          </>
-        )}
-      </Camera>
+      <Camera style={styles.camera} type={type} ref={(ref) => (camera = ref)} />
+      <ActivityIndicator visible={loading} />
+      {!loading && (
+        <>
+          <View style={styles.firstLanguage}>
+            <LanguageTexts
+              language="English"
+              translation={word}
+              onPress={speakMainLanguage}
+            />
+          </View>
+          <View style={styles.secondLanguage}>
+            <LanguageTexts
+              language="Japanese"
+              translation={translatedWord}
+              onPress={speakJapanese}
+            />
+          </View>
+          <View style={styles.cameraButton}>
+            <CameraButton onPress={() => takePicture()} />
+          </View>
+          <View style={styles.reverse}>
+            <IconButton
+              name="ios-reverse-camera"
+              backgroundColor="transparent"
+              iconColor={colors.primary}
+              size={50}
+              onPress={() => handleReverse()}
+            />
+          </View>
+        </>
+      )}
     </View>
   );
 }
@@ -112,16 +106,16 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
   cameraButton: {
     position: "absolute",
+    alignSelf: "center",
     bottom: 20,
     flexDirection: "row",
   },
   firstLanguage: {
     position: "absolute",
+    alignSelf: "center",
     top: Constants.statusBarHeight + 40,
   },
   reverse: {
@@ -131,6 +125,7 @@ const styles = StyleSheet.create({
   },
   secondLanguage: {
     position: "absolute",
+    alignSelf: "center",
     bottom: 150,
   },
 });
