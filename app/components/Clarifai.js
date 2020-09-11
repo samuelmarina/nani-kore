@@ -1,6 +1,6 @@
 import Clarifai from "clarifai";
 
-const app = new Clarifai.App({ apiKey: "184fabe812944828b8bff9cbd35b1521" });
+const app = new Clarifai.App({ apiKey: "YOUR_API_KEY" });
 
 export default getPrediction = async (url) => {
   try {
